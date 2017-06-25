@@ -11,6 +11,8 @@ import FlickrKit
 
 class MasterViewController: UITableViewController {
 
+    @IBOutlet weak var mySearchBar: UISearchBar!
+    
     var detailViewController: DetailViewController? = nil
     var objects = [Any]()
     var photoURLs: [URL]!
@@ -26,7 +28,9 @@ class MasterViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoURLs = []
-        
+        self.tableView.contentInset = UIEdgeInsets(top: 60,left: 0,bottom: 0,right: 0)
+
+
         
         let apiKey:String = "c0a65bfe2f1c606a9a5a041a1678f2d9"
         let sharedSecret:String = "3110d4a7ebefdf30"
@@ -111,9 +115,9 @@ class MasterViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
-                let object = images[indexPath.row] as! UIImage
+                let image = images[indexPath.row] 
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
+                controller.detailItem = image
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -152,6 +156,10 @@ class MasterViewController: UITableViewController {
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
+    }
+    
+    func searchBarSearchButtonClicked(mySearchBar: UISearchBar) {
+        let mySearch = mySearchBar.text
     }
 
 

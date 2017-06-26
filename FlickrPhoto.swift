@@ -9,7 +9,7 @@
 import UIKit
 
 struct FlickrPhoto{
-    let title :String
-    let url: NSURL
-    let identifier: String
+    var title :String
+    var url: NSURL
+    var thumbnailurl: NSURL
 }

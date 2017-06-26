@@ -17,6 +17,7 @@ class MasterViewController: UITableViewController {
     var objects = [Any]()
     var photoURLs: [URL]!
     var images:[UIImage] = []
+    var photoStruct: [FlickrPhoto] = []
     
     @IBOutlet weak var searchTextView: UITextField!
     @IBOutlet weak var searchButton: UIButton!
@@ -33,9 +34,6 @@ class MasterViewController: UITableViewController {
         super.viewDidLoad()
         self.photoURLs = []
         self.tableView.contentInset = UIEdgeInsets(top: 60,left: 0,bottom: 0,right: 0)
-        self.myTableView.tableHeaderView = searchController.searchBar
-        
-        searchController.dimsBackgroundDuringPresentation = false
         
         FlickrKit.shared().initialize(withAPIKey: apiKey, sharedSecret: sharedSecret)
        
@@ -74,8 +72,11 @@ class MasterViewController: UITableViewController {
                 if let response = response, let photoArray = FlickrKit.shared().photoArray(fromResponse: response) {
                     // Pull out the photo urls from the results
                     for photoDictionary in photoArray {
-                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.small240, fromPhotoDictionary: photoDictionary)
-                        self.photoURLs.append(photoURL)
+                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.medium500, fromPhotoDictionary: photoDictionary)
+                        let thumbnailURL = FlickrKit.shared().photoURL(for: FKPhotoSize.smallSquare75, fromPhotoDictionary: photoDictionary)
+                        let title = photoDictionary["title"] as! String
+                        let photo = FlickrPhoto(title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
+                        self.photoStruct.append(photo)
                     }
                     self.loadImages()
                     //self.performSegue(withIdentifier: "SegueToPhotos", sender: self)
@@ -100,7 +101,7 @@ class MasterViewController: UITableViewController {
     
     func findImages(mySearch:String){
         
-        photoURLs = []
+        photoStruct = []
         let photoSearch = FKFlickrPhotosSearch()
         photoSearch.text = mySearch
         photoSearch.sort = "relevance"
@@ -112,20 +113,27 @@ class MasterViewController: UITableViewController {
             DispatchQueue.main.async(execute: { () -> Void in
                 if let response = response, let photoArray = FlickrKit.shared().photoArray(fromResponse: response) {
                     for photoDictionary in photoArray {
-                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.small240, fromPhotoDictionary: photoDictionary)
+                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.medium500, fromPhotoDictionary: photoDictionary)
+                        let thumbnailURL = FlickrKit.shared().photoURL(for: FKPhotoSize.smallSquare75, fromPhotoDictionary: photoDictionary)
+                        let title = photoDictionary["title"] as! String
+                        let photo = FlickrPhoto(title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
+                        self.photoStruct.append(photo)
+                        
                         self.photoURLs.append(photoURL)
                     }
+                    self.loadImages()
     }
     
             })
         }
-        loadImages()
+        
         
     }
     func loadImages()  {
 
-    for url in self.photoURLs {
-        let urlRequest = URLRequest(url: url)
+        images = []
+    for url in self.photoStruct {
+        let urlRequest = URLRequest(url: url.thumbnailurl as URL)
         NSURLConnection.sendAsynchronousRequest(urlRequest, queue: OperationQueue.main, completionHandler: { (response, data, error) -> Void in
             let image = UIImage(data: data!)
             self.images.append(image!)

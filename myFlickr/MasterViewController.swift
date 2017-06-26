@@ -10,14 +10,16 @@ import UIKit
 import FlickrKit
 
 class MasterViewController: UITableViewController {
-
-    @IBOutlet weak var mySearchBar: UISearchBar!
-    
+  
     var detailViewController: DetailViewController? = nil
+    let apiKey:String = "c0a65bfe2f1c606a9a5a041a1678f2d9"
+    let sharedSecret:String = "3110d4a7ebefdf30"
     var objects = [Any]()
     var photoURLs: [URL]!
     var images:[UIImage] = []
-
+    
+    @IBOutlet weak var searchTextView: UITextField!
+    @IBOutlet weak var searchButton: UIButton!
     //DataSource auf diesen Controller setzen
     @IBOutlet var myTableView: UITableView! {
         didSet {
@@ -25,19 +27,46 @@ class MasterViewController: UITableViewController {
         }
     }
     
+    let searchController = UISearchController(searchResultsController: nil)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.photoURLs = []
         self.tableView.contentInset = UIEdgeInsets(top: 60,left: 0,bottom: 0,right: 0)
-
-
+        self.myTableView.tableHeaderView = searchController.searchBar
         
-        let apiKey:String = "c0a65bfe2f1c606a9a5a041a1678f2d9"
-        let sharedSecret:String = "3110d4a7ebefdf30"
+        searchController.dimsBackgroundDuringPresentation = false
+        
         FlickrKit.shared().initialize(withAPIKey: apiKey, sharedSecret: sharedSecret)
+       
+        findInteresting()
+        loadImages()
+        
+                    // Do any additional setup after loading the view, typically from a nib.
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+
+        if let split = self.splitViewController {
+            let controllers = split.viewControllers
+            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
+        super.viewWillAppear(animated)
+        
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+
+    func findInteresting(){
         
         let flickrInteresting = FKFlickrInterestingnessGetList()
         flickrInteresting.per_page = "15"
+        
         
         FlickrKit.shared().call(flickrInteresting) { (response, error) -> Void in
             
@@ -67,38 +96,34 @@ class MasterViewController: UITableViewController {
             })
         }
 
-                    // Do any additional setup after loading the view, typically from a nib.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem
-
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
-        self.navigationItem.rightBarButtonItem = addButton
-        if let split = self.splitViewController {
-            let controllers = split.viewControllers
-            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        }
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
-        super.viewWillAppear(animated)
-        
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
-        let indexPath = IndexPath(row: 0, section: 0)
-        self.tableView.insertRows(at: [indexPath], with: .automatic)
-        
-        
-    }
-
-   func loadImages()  {
     
+    func findImages(mySearch:String){
+        
+        photoURLs = []
+        let photoSearch = FKFlickrPhotosSearch()
+        photoSearch.text = mySearch
+        photoSearch.sort = "relevance"
+        photoSearch.media = "photos"
+        photoSearch.per_page = "15"
+        
+        FlickrKit.shared().call(photoSearch) { (response, error) -> Void in
+            
+            DispatchQueue.main.async(execute: { () -> Void in
+                if let response = response, let photoArray = FlickrKit.shared().photoArray(fromResponse: response) {
+                    for photoDictionary in photoArray {
+                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.small240, fromPhotoDictionary: photoDictionary)
+                        self.photoURLs.append(photoURL)
+                    }
+    }
+    
+            })
+        }
+        loadImages()
+        
+    }
+    func loadImages()  {
+
     for url in self.photoURLs {
         let urlRequest = URLRequest(url: url)
         NSURLConnection.sendAsynchronousRequest(urlRequest, queue: OperationQueue.main, completionHandler: { (response, data, error) -> Void in
@@ -157,11 +182,10 @@ class MasterViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
-    
-    func searchBarSearchButtonClicked(mySearchBar: UISearchBar) {
-        let mySearch = mySearchBar.text
+    @IBAction func onSearchButtonClicked(_ sender: UIButton) {
+        let mySearch:String = searchTextView.text!
+        findImages(mySearch: mySearch)
     }
-
 
 }
 

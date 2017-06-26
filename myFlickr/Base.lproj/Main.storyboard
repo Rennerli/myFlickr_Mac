@@ -47,10 +47,19 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
                     <connections>
+                        <outlet property="searchDisplayController" destination="tIl-Ae-Rc4" id="0TN-JH-ivB"/>
                         <outlet property="uiDetailView" destination="0qn-fp-5am" id="LH9-mP-evy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="tIl-Ae-Rc4">
+                    <connections>
+                        <outlet property="delegate" destination="JEX-9P-axG" id="Jae-sh-QoW"/>
+                        <outlet property="searchContentsController" destination="JEX-9P-axG" id="IjG-Ce-BEQ"/>
+                        <outlet property="searchResultsDataSource" destination="JEX-9P-axG" id="CEa-hQ-SiW"/>
+                        <outlet property="searchResultsDelegate" destination="JEX-9P-axG" id="9mK-aw-fb1"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="708" y="128.18590704647679"/>
         </scene>
@@ -76,37 +85,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <view key="tableHeaderView" contentMode="scaleToFill" id="6Fc-cC-ffn">
+                        <stackView key="tableHeaderView" opaque="NO" contentMode="scaleToFill" id="wNF-VX-kHj">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2mv-5W-LCT">
-                                    <rect key="frame" x="274" y="14" width="52" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZPQ-xY-i0k">
-                                            <rect key="frame" x="0.0" y="0.0" width="52" height="30"/>
-                                            <accessibility key="accessibilityConfiguration" label="Suchen"/>
-                                            <state key="normal" title="Suchen"/>
-                                        </button>
-                                    </subviews>
-                                </stackView>
-                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="35" translatesAutoresizingMaskIntoConstraints="NO" id="ySH-tG-cZi">
-                                    <rect key="frame" x="8" y="14" width="258" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yq9-mT-UsJ">
+                                    <rect key="frame" x="0.0" y="0.0" width="327" height="44"/>
                                     <nil key="textColor"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
+                                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cd1-ae-UgI">
+                                    <rect key="frame" x="327" y="0.0" width="48" height="44"/>
+                                    <state key="normal" title="Search"/>
+                                    <connections>
+                                        <action selector="onSearchButtonClicked:" destination="7bK-jq-Zjz" eventType="touchUpInside" id="J4o-hN-8dq"/>
+                                    </connections>
+                                </button>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        </view>
+                        </stackView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" rowHeight="68" id="WCw-Qf-5nD">
                                 <rect key="frame" x="0.0" y="66" width="375" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" autoresizesSubviews="NO" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WCw-Qf-5nD" id="37f-cq-3Eg">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="67"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" alignment="top" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="lXE-IB-VUK">
@@ -158,8 +161,21 @@
                         <nil key="title"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="searchButton" destination="cd1-ae-UgI" id="VS3-pc-CVY"/>
+                        <outlet property="searchDisplayController" destination="6IB-lV-f2C" id="9IA-QA-gJI"/>
+                        <outlet property="searchTextView" destination="yq9-mT-UsJ" id="5JG-gf-6hu"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="6IB-lV-f2C">
+                    <connections>
+                        <outlet property="delegate" destination="7bK-jq-Zjz" id="LnU-GA-qjR"/>
+                        <outlet property="searchContentsController" destination="7bK-jq-Zjz" id="NPq-u7-PrY"/>
+                        <outlet property="searchResultsDataSource" destination="7bK-jq-Zjz" id="mgV-41-tXH"/>
+                        <outlet property="searchResultsDelegate" destination="7bK-jq-Zjz" id="Aeo-Ew-4TY"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1647.2" y="-630.13493253373315"/>
         </scene>
@@ -190,6 +206,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="EaF-bJ-7sP"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="MKS-Fe-yHy">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>

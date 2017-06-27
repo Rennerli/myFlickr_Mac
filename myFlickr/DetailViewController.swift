@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UIScrollViewDelegate {
 
     @IBOutlet weak var detailDescriptionLabel: UILabel!
 
@@ -34,7 +34,9 @@ class DetailViewController: UIViewController {
         }
     }
     
-
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return uiDetailView
+    }
 
 }
 

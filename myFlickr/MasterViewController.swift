@@ -19,6 +19,7 @@ class MasterViewController: UITableViewController {
     var photoArray: [FlickrPhoto] = []
     var descriptions: [String] = []
     var imagesTmp:[FlickrPhoto] = []
+    var lastSearch:[FlickrPhoto] = []
 
     
 
@@ -253,6 +254,7 @@ class MasterViewController: UITableViewController {
     @IBAction func onSearchButtonClicked(_ sender: UIButton) {
         let mySearch:String = searchTextView.text!
         findImages(mySearch: mySearch)
+        lastSearch = imagesTmp
     }
 
 }

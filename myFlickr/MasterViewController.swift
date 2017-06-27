@@ -17,8 +17,12 @@ class MasterViewController: UITableViewController {
     var objects = [Any]()
     var photoURLs: [URL]!
     var images:[UIImage] = []
+    var imagesBig:[UIImage] = []
     var photoStruct: [FlickrPhoto] = []
+    var descriptions: [String] = []
     
+
+    @IBOutlet weak var photoTitle: UILabel!
     @IBOutlet weak var searchTextView: UITextField!
     @IBOutlet weak var searchButton: UIButton!
     //DataSource auf diesen Controller setzen
@@ -72,10 +76,11 @@ class MasterViewController: UITableViewController {
                 if let response = response, let photoArray = FlickrKit.shared().photoArray(fromResponse: response) {
                     // Pull out the photo urls from the results
                     for photoDictionary in photoArray {
-                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.medium500, fromPhotoDictionary: photoDictionary)
+                        let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.medium800, fromPhotoDictionary: photoDictionary)
                         let thumbnailURL = FlickrKit.shared().photoURL(for: FKPhotoSize.smallSquare75, fromPhotoDictionary: photoDictionary)
                         let title = photoDictionary["title"] as! String
-                        let photo = FlickrPhoto(title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
+                        let id = photoDictionary["id"] as! String
+                        let photo = FlickrPhoto(id: id,title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
                         self.photoStruct.append(photo)
                     }
                     self.loadImages()
@@ -115,11 +120,11 @@ class MasterViewController: UITableViewController {
                     for photoDictionary in photoArray {
                         let photoURL = FlickrKit.shared().photoURL(for: FKPhotoSize.medium500, fromPhotoDictionary: photoDictionary)
                         let thumbnailURL = FlickrKit.shared().photoURL(for: FKPhotoSize.smallSquare75, fromPhotoDictionary: photoDictionary)
+                        let id = photoDictionary["id"] as! String
                         let title = photoDictionary["title"] as! String
-                        let photo = FlickrPhoto(title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
+
+                        let photo = FlickrPhoto(id : id,title: title, url : photoURL as NSURL, thumbnailurl:thumbnailURL as NSURL)
                         self.photoStruct.append(photo)
-                        
-                        self.photoURLs.append(photoURL)
                     }
                     self.loadImages()
     }
@@ -130,27 +135,58 @@ class MasterViewController: UITableViewController {
         
     }
     func loadImages()  {
-
         images = []
+        imagesBig = []
     for url in self.photoStruct {
         let urlRequest = URLRequest(url: url.thumbnailurl as URL)
         NSURLConnection.sendAsynchronousRequest(urlRequest, queue: OperationQueue.main, completionHandler: { (response, data, error) -> Void in
             let image = UIImage(data: data!)
             self.images.append(image!)
+            self.getDescription()
+            
         })
-
+        let urlRequestBig = URLRequest(url: url.url as URL)
+        NSURLConnection.sendAsynchronousRequest(urlRequestBig, queue: OperationQueue.main, completionHandler: { (response, data, error) -> Void in
+            let image = UIImage(data: data!)
+            self.imagesBig.append(image!)
+            
+        })
 
     }
               }
 
+    func getDescription () {
+        
+        descriptions = []
+        //getDescription
+        let getInfo = FKFlickrPhotosGetInfo()
+        for photoInStruct in photoStruct{
+        getInfo.photo_id = photoInStruct.id
+        DispatchQueue.main.async(execute: { () -> Void in
+            FlickrKit.shared().call(getInfo) { (response, error) in
+                guard error == nil else {
+                    return
+                }
+                if let response = response {
+                    let photo = response["photo"] as! [String: AnyObject]
+                    self.descriptions.append(((photo["description"] as! [String: AnyObject])["_content"] as? String)!)
+                    
+                }
+                
+            }
+        })
+
+        }
+
+    }
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
-                let image = images[indexPath.row] 
+                let imageBig = imagesBig[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = image
+                controller.detailItem = imageBig
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -168,11 +204,17 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) 
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PhotoTableViewCell
+    
+    
         //Load photos
         if images.count > 0 {
         let object = images[indexPath.row]
         cell.imageView?.image = object
+        }
+        if !photoStruct.isEmpty{
+            cell.photoTitle.text = photoStruct[indexPath.row].title
+            cell.photoDescription.text = descriptions[indexPath.row]
         }
         return cell
     }
@@ -197,3 +239,8 @@ class MasterViewController: UITableViewController {
 
 }
 
+class PhotoTableViewCell: UITableViewCell {
+    @IBOutlet weak var photoTitle: UILabel!
+    
+    @IBOutlet weak var photoDescription: UILabel!
+}

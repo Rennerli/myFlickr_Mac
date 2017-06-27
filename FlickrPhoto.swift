@@ -9,7 +9,9 @@
 import UIKit
 
 struct FlickrPhoto{
+    var id: String
     var title :String
     var url: NSURL
     var thumbnailurl: NSURL
+
 }

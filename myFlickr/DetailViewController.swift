@@ -14,19 +14,10 @@ class DetailViewController: UIViewController {
 
     @IBOutlet weak var uiDetailView: UIImageView!
 
-    func configureView() {
-        // Update the user interface for the detail item.
-        if let detail = self.detailItem {
-            if let label = self.uiDetailView {
-                label.image = detail
-            }
-        }
-    }
-
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.configureView()
     }
 
     override func didReceiveMemoryWarning() {
@@ -34,12 +25,15 @@ class DetailViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    var detailItem: UIImage? {
-        didSet {
-            // Update the view.
-            self.configureView()
+    var detailItem: FlickrPhoto? {
+        didSet{
+        let urlRequest = URLRequest(url: detailItem?.url as! URL)
+        NSURLConnection.sendAsynchronousRequest(urlRequest, queue: OperationQueue.main, completionHandler: { (response, data, error) -> Void in
+             self.uiDetailView.image = UIImage(data: data!)
+        })
         }
     }
+    
 
 
 }

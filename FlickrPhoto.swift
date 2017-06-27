@@ -13,5 +13,7 @@ struct FlickrPhoto{
     var title :String
     var url: NSURL
     var thumbnailurl: NSURL
+    var imageSmall: UIImage?
+    var ImageBig: UIImage?
 
 }

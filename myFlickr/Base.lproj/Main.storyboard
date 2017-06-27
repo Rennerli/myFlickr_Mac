@@ -37,10 +37,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0qn-fp-5am">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" maximumZoomScale="8" translatesAutoresizingMaskIntoConstraints="NO" id="FOw-Ff-eO6">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                            </imageView>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0qn-fp-5am">
+                                        <rect key="frame" x="0.0" y="8" width="375" height="612"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <connections>
+                                    <outlet property="delegate" destination="JEX-9P-axG" id="kwH-Zd-9JV"/>
+                                </connections>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -90,13 +99,13 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yq9-mT-UsJ">
-                                    <rect key="frame" x="0.0" y="0.0" width="327" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="25" height="44"/>
                                     <nil key="textColor"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits"/>
                                 </textField>
                                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cd1-ae-UgI">
-                                    <rect key="frame" x="327" y="0.0" width="48" height="44"/>
+                                    <rect key="frame" x="25" y="0.0" width="350" height="44"/>
                                     <state key="normal" title="Search"/>
                                     <connections>
                                         <action selector="onSearchButtonClicked:" destination="7bK-jq-Zjz" eventType="touchUpInside" id="J4o-hN-8dq"/>
@@ -122,10 +131,10 @@
                                                     </constraints>
                                                 </imageView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="M2L-Kk-D1q">
-                                                    <rect key="frame" x="86" y="0.0" width="89.5" height="34"/>
+                                                    <rect key="frame" x="86" y="0.0" width="90" height="34"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" restorationIdentifier="photoTitle" text="Titel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WG2-2p-TfW">
-                                                            <rect key="frame" x="0.0" y="0.0" width="89.5" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="90" height="17"/>
                                                             <accessibility key="accessibilityConfiguration" identifier="photoTitle">
                                                                 <accessibilityTraits key="traits" none="YES"/>
                                                             </accessibility>
@@ -134,7 +143,7 @@
                                                             <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </label>
                                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" restorationIdentifier="photoDescription" text="Beschreibung" lineBreakMode="characterWrap" baselineAdjustment="alignBaselines" minimumFontSize="5" translatesAutoresizingMaskIntoConstraints="NO" id="4uB-fE-LFR">
-                                                            <rect key="frame" x="0.0" y="18" width="89.5" height="16"/>
+                                                            <rect key="frame" x="0.0" y="18" width="90" height="16"/>
                                                             <accessibility key="accessibilityConfiguration" identifier="photoDescription">
                                                                 <accessibilityTraits key="traits" notEnabled="YES"/>
                                                             </accessibility>
